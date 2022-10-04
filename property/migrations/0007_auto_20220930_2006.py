@@ -5,13 +5,13 @@ from django.db import migrations
 
 def is_valid_number(apps, schema_editor):
     Flat = apps.get_model('property', 'Flat')
-    for flat in Flat.objects.all():
+    for flat in Flat.objects.all().iterator():
         parse_number = phonenumbers.parse(flat.owners_phonenumber, 'RU')
         if phonenumbers.is_valid_number(parse_number):
-            flat.owner_pure_phone = parse_number
+            flat.pure_phone = parse_number
             flat.save()
         else:
-            flat.owner_pure_phone = False
+            flat.pure_phone = False
             flat.save()
 
 
