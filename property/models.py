@@ -5,9 +5,18 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Flat(models.Model):
-    owner = models.CharField('ФИО владельца', blank=False, max_length=200, db_index=True)
-    owners_phonenumber = models.CharField('Номер владельца', blank=False, max_length=20, db_index=True)
-    owner_pure_phone = PhoneNumberField('Правильный номер владельца', region='RU', blank=True, max_length=20, db_index=True)
+    owner = models.CharField('ФИО владельца',
+                             max_length=200,
+                             db_index=True)
+    owners_phonenumber = models.CharField('Номер владельца',
+                                          max_length=20,
+                                          db_index=True)
+    pure_phone = PhoneNumberField('Правильный номер владельца',
+                                  region='RU',
+                                  blank=True,
+                                  max_length=20,
+                                  db_index=True)
+
     description = models.TextField('Текст объявления', blank=True)
     price = models.IntegerField('Цена квартиры', db_index=True)
 
@@ -47,6 +56,7 @@ class Flat(models.Model):
     new_building = models.BooleanField(blank=True)
     liked_by = models.ManyToManyField(User,
                                       verbose_name='Кто лайкнул',
+                                      related_name='liked_flats',
                                       blank=True)
     created_at = models.DateTimeField(
         'Когда создано объявление',
@@ -60,9 +70,11 @@ class Flat(models.Model):
 class Claims(models.Model):
     user = models.ForeignKey(User,
                              verbose_name='Кто жаловался',
+                             related_name='claims',
                              on_delete=models.CASCADE,
                              blank=False)
     flat = models.ForeignKey(Flat,
+                              related_name='claims',
                               verbose_name="Квартира, на которую жаловались",
                               on_delete=models.CASCADE)
     text = models.TextField(verbose_name="Текст", blank=True)
